@@ -23,6 +23,7 @@ Works on **Windows, macOS, and Linux** using **Enigo** for cross-platform media 
 * Minimal, fast, and responsive
 * Works over LAN
 * Displays your PC’s LAN IP on startup
+* Supports a custom port via first CLI argument
 * Backend built with **Rust + Axum + Enigo**
 
 ---
@@ -95,6 +96,12 @@ cargo build --release
 cargo run --release
 ```
 
+Run on a custom port:
+
+```bash
+cargo run --release -- 8080
+```
+
 ---
 
 ### Open the remote
@@ -102,9 +109,10 @@ cargo run --release
 * On your phone (connected to the same LAN), open:
 
   ```
-  http://<PC_LAN_IP>:3000
+  http://<PC_LAN_IP>:<PORT>
   ```
 * Use the buttons to control media on your PC.
+* Default port is `3000` if you do not pass an argument.
 
 ---
 
@@ -133,6 +141,10 @@ cargo run --release
 * Works on **Windows, macOS, and Linux**.
 * **Rust toolchain is only required when building from source**.
 * `install.ps1` adds the install directory to user `PATH` on Windows if missing.
+* On startup, the server accepts one optional positional argument: `port`.
+* If binding fails, the app exits with a clear error for:
+  * permission denied (for example, privileged ports)
+  * address already in use
 
 ---
 
