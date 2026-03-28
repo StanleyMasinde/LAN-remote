@@ -26,63 +26,74 @@ Works on **Windows, macOS, and Linux** using **Enigo** for cross-platform media 
 
 ## Requirements
 
-* Rust toolchain installed (via [rustup](https://rustup.rs/))
 * LAN connection between PC and mobile device
 
 ---
 
 ## Installation
 
-### 1. Install Rust
+### Option A: Install prebuilt binaries (recommended)
 
-**Windows:**
-
-* Download and run the installer from [rustup.rs](https://rustup.rs/)
-* Follow the prompts to install Rust and Cargo
-
-**macOS / Linux:**
-
-* Open a terminal and run:
-
-  ```bash
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-  ```
-* Follow the on-screen instructions
-
-Verify installation:
+**macOS / Linux (latest):**
 
 ```bash
-rustc --version
-cargo --version
+curl -fsSL https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.sh | sh
+```
+
+**macOS / Linux (specific version):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.sh | sh -s v1.0.0
+```
+
+**Windows PowerShell (latest):**
+
+```powershell
+iwr https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1 -OutFile install.ps1
+.\install.ps1
+```
+
+**Windows PowerShell (specific version):**
+
+```powershell
+iwr https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1 -OutFile install.ps1
+.\install.ps1 -Version v1.0.0
+```
+
+Custom install directory:
+
+- Unix: set `LAN_REMOTE_INSTALL`, example:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.sh | LAN_REMOTE_INSTALL=~/.local/bin sh
+```
+
+- PowerShell: use `-InstallDir` or set `LAN_REMOTE_INSTALL`, example:
+
+```powershell
+.\install.ps1 -InstallDir "$HOME\\bin"
 ```
 
 ---
 
-### 2. Build the server
+### Option B: Build from source
 
-Open a terminal (or PowerShell on Windows) in the project directory:
+1. Install Rust from [rustup.rs](https://rustup.rs/).
+2. Build:
 
 ```bash
 cargo build --release
 ```
 
----
-
-### 3. Run the server
+3. Run:
 
 ```bash
 cargo run --release
 ```
 
-On startup, the terminal will display your LAN IP and port, for example:
-
-```
-Server running on http://192.168.100.27:3000
-```
-
 ---
 
-### 4. Open the remote
+### Open the remote
 
 * On your phone (connected to the same LAN), open:
 
@@ -112,7 +123,8 @@ Server running on http://192.168.100.27:3000
 * Your phone and PC must be **on the same LAN**.
 * Designed for LAN use only; not exposed to the internet.
 * Works on **Windows, macOS, and Linux**.
-* **Rust toolchain is required** to build and run the server.
+* **Rust toolchain is only required when building from source**.
+* `install.ps1` adds the install directory to user `PATH` on Windows if missing.
 
 ---
 
