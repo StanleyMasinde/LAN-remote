@@ -1,4 +1,4 @@
-use std::process;
+use std::{env::args, process};
 
 use axum::{
     Json, Router,
@@ -108,8 +108,14 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
 }
 
 async fn run_server() {
+    let first_arg = args().nth(1);
     let mut local_ip = "0.0.0.0".to_string();
-    let port = "3000";
+    let mut port = "3000".to_string();
+
+    if let Some(arg) = first_arg {
+        port = arg
+    }
+
     let address = format!("{}:{}", local_ip, port);
 
     if let Some(ip) = get_local_ip().await {
