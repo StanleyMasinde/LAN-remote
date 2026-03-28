@@ -1,0 +1,174 @@
+name: Generate Release Notes
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to update/upload assets to (for example v1.0.0)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  generate-release-notes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate and attach release notes
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            let release = context.payload.release;
+
+            if (!release) {
+              const tag = context.payload.inputs?.tag;
+              if (!tag) {
+                core.setFailed("No release payload or workflow_dispatch tag input found.");
+                return;
+              }
+
+              try {
+                const response = await github.rest.repos.getReleaseByTag({
+                  owner,
+                  repo,
+                  tag,
+                });
+                release = response.data;
+              } catch (error) {
+                core.setFailed(`Could not find release for tag '${tag}'.`);
+                return;
+              }
+            }
+
+            if (!release) {
+              core.setFailed("No release payload found.");
+              return;
+            }
+
+            const currentBody = (release.body || "").trim();
+            if (currentBody.length > 0) {
+              core.info("Release already has notes. Skipping generation.");
+              return;
+            }
+
+            const generated = await github.rest.repos.generateReleaseNotes({
+              owner,
+              repo,
+              tag_name: release.tag_name,
+              target_commitish: release.target_commitish,
+            });
+
+            await github.rest.repos.updateRelease({
+              owner,
+              repo,
+              release_id: release.id,
+              body: generated.data.body,
+              name: release.name || generated.data.name,
+            });
+
+            core.info(`Release notes generated for ${release.tag_name}.`);
+
+  build-and-upload:
+    name: Build and Upload (${{ matrix.target }})
+    needs: generate-release-notes
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            platform: linux
+            arch: x86_64
+            ext: ""
+            archive: tar.gz
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            platform: linux
+            arch: arm64
+            ext: ""
+            archive: tar.gz
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            platform: macos
+            arch: x86_64
+            ext: ""
+            archive: tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            platform: macos
+            arch: arm64
+            ext: ""
+            archive: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            platform: windows
+            arch: x86_64
+            ext: ".exe"
+            archive: zip
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            platform: windows
+            arch: arm64
+            ext: ".exe"
+            archive: zip
+
+    env:
+      BIN_NAME: lan_remote
+      RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install Linux ARM64 linker
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build release binary
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package artifact (Linux/macOS)
+        if: matrix.archive == 'tar.gz'
+        shell: bash
+        run: |
+          ASSET_NAME="${BIN_NAME}-${{ matrix.platform }}-${{ matrix.arch }}-${RELEASE_TAG}.tar.gz"
+          tar -czf "$ASSET_NAME" -C "target/${{ matrix.target }}/release" "$BIN_NAME"
+          echo "ASSET_NAME=$ASSET_NAME" >> "$GITHUB_ENV"
+
+      - name: Package artifact (Windows)
+        if: matrix.archive == 'zip'
+        shell: pwsh
+        run: |
+          $assetName = "$env:BIN_NAME-${{ matrix.platform }}-${{ matrix.arch }}-$env:RELEASE_TAG.zip"
+          Compress-Archive -Path "target/${{ matrix.target }}/release/$env:BIN_NAME${{ matrix.ext }}" -DestinationPath $assetName -Force
+          "ASSET_NAME=$assetName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Upload artifact to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: ${{ env.ASSET_NAME }}
+          fail_on_unmatched_files: true
+          append_body: false
+          overwrite_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
