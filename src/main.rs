@@ -44,7 +44,6 @@ struct KeyRequest {
 }
 
 async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
-    println!("{}", payload.key);
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
     let key = match payload.key.as_str() {
