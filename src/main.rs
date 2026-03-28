@@ -47,9 +47,11 @@ pub enum RemoteKey {
     #[serde(rename = "PlayPause")]
     PlayPause,
     #[cfg(not(target_os = "windows"))]
+    #[cfg(not(target_os = "linux"))]
     #[serde(rename = "seek_left")]
     SeekLeft,
     #[cfg(not(target_os = "windows"))]
+    #[cfg(not(target_os = "linux"))]
     #[serde(rename = "seek_right")]
     SeekRight,
     #[serde(rename = "up")]
@@ -83,8 +85,10 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
         RemoteKey::VolumeDown => Key::VolumeDown,
         RemoteKey::PlayPause => Key::MediaPlayPause,
         #[cfg(not(target_os = "windows"))]
+        #[cfg(not(target_os = "linux"))]
         RemoteKey::SeekLeft => Key::MediaRewind,
         #[cfg(not(target_os = "windows"))]
+        #[cfg(not(target_os = "linux"))]
         RemoteKey::SeekRight => Key::MediaFast,
         RemoteKey::Up => Key::UpArrow,
         RemoteKey::Down => Key::DownArrow,
