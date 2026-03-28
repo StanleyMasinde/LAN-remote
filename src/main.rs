@@ -1,3 +1,5 @@
+use std::process;
+
 use axum::{
     Json, Router,
     response::Html,
@@ -107,6 +109,8 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
 
 async fn run_server() {
     let mut local_ip = "0.0.0.0".to_string();
+    let port = "3000";
+    let address = format!("{}:{}", local_ip, port);
 
     if let Some(ip) = get_local_ip().await {
         local_ip = ip;
@@ -114,7 +118,21 @@ async fn run_server() {
     let app = Router::new()
         .route("/", get(index_handler))
         .route("/key", post(handle_keys));
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = match tokio::net::TcpListener::bind(address).await {
+        Ok(l) => l,
+        Err(e) => {
+            let message = match e.kind() {
+                std::io::ErrorKind::PermissionDenied => {
+                    format!("You don't have permission to bind to {port}")
+                }
+                std::io::ErrorKind::AddrInUse => format!("Address already in use."),
+                _ => panic!("Unexpected branch reached"),
+            };
+
+            eprintln!("{message}");
+            process::exit(1)
+        }
+    };
     let local_addr = listener.local_addr().unwrap();
 
     println!(
