@@ -38,23 +38,55 @@ async fn index_handler() -> Html<Vec<u8>> {
     Html(index_page)
 }
 
+#[derive(Debug, Deserialize)]
+pub enum RemoteKey {
+    #[serde(rename = "volume_up")]
+    VolumeUp,
+    #[serde(rename = "volume_down")]
+    VolumeDown,
+    #[serde(rename = "PlayPause")]
+    PlayPause,
+    #[serde(rename = "seek_left")]
+    SeekLeft,
+    #[serde(rename = "seek_right")]
+    SeekRight,
+    #[serde(rename = "up")]
+    Up,
+    #[serde(rename = "down")]
+    Down,
+    #[serde(rename = "left")]
+    Left,
+    #[serde(rename = "right")]
+    Right,
+    #[serde(rename = "previous")]
+    Previous,
+    #[serde(rename = "next")]
+    Next,
+    #[serde(rename = "mute_toggle")]
+    MuteToggle,
+}
+
 #[derive(Deserialize)]
 struct KeyRequest {
-    key: String,
+    key: RemoteKey,
 }
 
 async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
-    let key = match payload.key.as_str() {
-        "PlayPause" => Key::MediaPlayPause,
-        "enter" => Key::Return,
-        "left" => Key::LeftArrow,
-        "right" => Key::RightArrow,
-        "volume_up" => Key::VolumeUp,
-        "volume_down" => Key::VolumeDown,
-        "mute_toggle" => Key::VolumeMute,
-        _ => return "Unknown".to_string(),
+    let key = match payload.key {
+        RemoteKey::VolumeUp => Key::VolumeUp,
+        RemoteKey::VolumeDown => Key::VolumeDown,
+        RemoteKey::PlayPause => Key::MediaPlayPause,
+        RemoteKey::SeekLeft => Key::MediaRewind,
+        RemoteKey::SeekRight => Key::MediaFast,
+        RemoteKey::Up => Key::UpArrow,
+        RemoteKey::Down => Key::DownArrow,
+        RemoteKey::Left => Key::LeftArrow,
+        RemoteKey::Right => Key::RightArrow,
+        RemoteKey::Previous => Key::MediaPrevTrack,
+        RemoteKey::Next => Key::MediaNextTrack,
+        RemoteKey::MuteToggle => Key::VolumeMute,
     };
 
     enigo.key(key, enigo::Direction::Press).unwrap();
