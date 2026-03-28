@@ -175,6 +175,9 @@ function Install-LanRemote([string]$RequestedVersion) {
         Write-Host ""
         Write-Host "Installed: $targetBinary"
         Write-Host "Run '$binaryFile --help' to get started"
+        if ($IsWindows) {
+            Write-Host "On Windows, open a fresh PowerShell or CMD before running '$binaryFile --help'."
+        }
     }
     finally {
         if (Test-Path $tmpDir) {
