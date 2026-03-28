@@ -64,6 +64,8 @@ pub enum RemoteKey {
     Next,
     #[serde(rename = "mute_toggle")]
     MuteToggle,
+    #[serde(rename = "enter")]
+    Enter,
 }
 
 #[derive(Deserialize)]
@@ -87,6 +89,7 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
         RemoteKey::Previous => Key::MediaPrevTrack,
         RemoteKey::Next => Key::MediaNextTrack,
         RemoteKey::MuteToggle => Key::VolumeMute,
+        RemoteKey::Enter => Key::Return,
     };
 
     enigo.key(key, enigo::Direction::Press).unwrap();
