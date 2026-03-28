@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LAN Remote</title>
+
+        <!-- icons (via CDN) -->
+        <script src="https://unpkg.com/feather-icons"></script>
+
+        <style>
+            :root {
+                --bg: #0f172a;
+                --card: #1e293b;
+                --accent: #3b82f6;
+                --text: #e2e8f0;
+            }
+
+            body {
+                margin: 0;
+                font-family: system-ui, sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+
+                header {
+                    text-align: center;
+                    padding: 1rem;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                }
+
+                main {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 2rem;
+                }
+            }
+
+            .pad {
+                display: grid;
+                grid-template-columns: repeat(3, 80px);
+                gap: 12px;
+
+                button {
+                    height: 70px;
+                    border: none;
+                    border-radius: 12px;
+                    background: var(--card);
+                    color: var(--text);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+
+                    svg {
+                        width: 28px;
+                        height: 28px;
+                    }
+
+                    &:active {
+                        background: var(--accent);
+                        transform: scale(0.95);
+                    }
+                }
+            }
+
+            .mute {
+                padding: 14px 28px;
+                border-radius: 999px;
+                border: none;
+                background: var(--card);
+                color: var(--text);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                svg {
+                    width: 22px;
+                    height: 22px;
+                }
+
+                &:active {
+                    background: var(--accent);
+                    transform: scale(0.95);
+                }
+            }
+
+            footer {
+                text-align: center;
+                padding: 0.5rem;
+                font-size: 0.75rem;
+                opacity: 0.6;
+            }
+        </style>
+    </head>
+
+    <body>
+        <header>Media Remote</header>
+
+        <main>
+            <div class="pad">
+                <div></div>
+                <button onclick="sendKey('volume_up')">
+                    <i data-feather="volume-2"></i>
+                </button>
+                <div></div>
+
+                <button onclick="sendKey('left')">
+                    <i data-feather="skip-back"></i>
+                </button>
+
+                <button onclick="sendKey('space')">
+                    <i data-feather="play"></i>
+                </button>
+
+                <button onclick="sendKey('right')">
+                    <i data-feather="skip-forward"></i>
+                </button>
+
+                <div></div>
+                <button onclick="sendKey('volume_down')">
+                    <i data-feather="volume-1"></i>
+                </button>
+                <div></div>
+            </div>
+
+            <button class="mute" onclick="sendKey('mute_toggle')">
+                <i data-feather="volume-x"></i>
+                Mute
+            </button>
+        </main>
+
+        <footer>LAN Media Remote</footer>
+
+        <script>
+            feather.replace();
+
+            async function sendKey(key) {
+                try {
+                    await fetch("/key", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ key }),
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        </script>
+    </body>
+</html>
