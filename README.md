@@ -11,14 +11,17 @@ Works on **Windows, macOS, and Linux** using **Enigo** for cross-platform media 
 ## Features
 
 * Mobile-optimized interface
-* Media controls:
-
+* Playback and media controls:
   * Play / Pause
-  * Seek Forward / Back
   * Volume Up / Down
   * Mute (toggle)
+  * Seek Forward / Back (**macOS-only in current build**)
+  * Previous / Next track
+* Navigation controls:
+  * Up / Down / Left / Right
+  * Enter
 * Minimal, fast, and responsive
-* Works over LAN — no internet required
+* Works over LAN
 * Displays your PC’s LAN IP on startup
 * Backend built with **Rust + Axum + Enigo**
 
@@ -27,6 +30,7 @@ Works on **Windows, macOS, and Linux** using **Enigo** for cross-platform media 
 ## Requirements
 
 * LAN connection between PC and mobile device
+* Startup IP detection currently probes route info via `8.8.8.8:80`; if that path is blocked, startup may fail in the current version
 
 ---
 
@@ -104,16 +108,20 @@ cargo run --release
 
 ---
 
-## Supported Media Actions
+## Supported Actions
 
-| Button / Action | Function             |
-| --------------- | -------------------- |
-| Play / Pause    | Start or pause media |
-| Seek Backward   | Skip backward        |
-| Seek Forward    | Skip forward         |
-| Volume Up       | Increase volume      |
-| Volume Down     | Decrease volume      |
-| Mute Toggle     | Toggle mute on/off   |
+| Button / Action | Function | Availability |
+| --------------- | -------- | ------------ |
+| Play / Pause | Start or pause media | Windows / macOS / Linux |
+| Seek Backward | Skip backward | macOS only (current build) |
+| Seek Forward | Skip forward | macOS only (current build) |
+| Volume Up | Increase volume | Windows / macOS / Linux |
+| Volume Down | Decrease volume | Windows / macOS / Linux |
+| Mute Toggle | Toggle mute on/off | Windows / macOS / Linux |
+| Previous | Previous track/chapter | Windows / macOS / Linux |
+| Next | Next track/chapter | Windows / macOS / Linux |
+| Up / Down / Left / Right | Directional navigation | Windows / macOS / Linux |
+| Enter | Confirm/select | Windows / macOS / Linux |
 
 ---
 
@@ -121,7 +129,7 @@ cargo run --release
 
 * The **Mute button is stateless** — it always sends a toggle command.
 * Your phone and PC must be **on the same LAN**.
-* Designed for LAN use only; not exposed to the internet.
+* Designed for LAN use only; not intended to be exposed to the internet.
 * Works on **Windows, macOS, and Linux**.
 * **Rust toolchain is only required when building from source**.
 * `install.ps1` adds the install directory to user `PATH` on Windows if missing.
