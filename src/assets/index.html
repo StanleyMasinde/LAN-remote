@@ -110,11 +110,21 @@
                 cursor: pointer;
                 user-select: none;
                 -webkit-tap-highlight-color: transparent;
+                transition:
+                    transform 120ms ease,
+                    box-shadow 120ms ease,
+                    filter 120ms ease;
             }
 
             button:active {
                 transform: scale(0.97);
                 box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--muted) 35%, transparent);
+            }
+
+            button.is-pressed {
+                transform: scale(0.97);
+                box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--muted) 40%, transparent);
+                filter: brightness(0.95);
             }
 
             button:focus-visible {
@@ -431,6 +441,23 @@
                     console.error(e);
                 }
             }
+
+            function flashPressed(button) {
+                button.classList.add('is-pressed');
+                setTimeout(() => button.classList.remove('is-pressed'), 140);
+            }
+
+            document.querySelectorAll('button').forEach((button) => {
+                button.addEventListener('pointerdown', () => button.classList.add('is-pressed'));
+                button.addEventListener('pointerup', () => button.classList.remove('is-pressed'));
+                button.addEventListener('pointercancel', () => button.classList.remove('is-pressed'));
+                button.addEventListener('pointerleave', () => button.classList.remove('is-pressed'));
+                button.addEventListener('click', () => flashPressed(button));
+                button.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') button.classList.add('is-pressed');
+                });
+                button.addEventListener('keyup', () => button.classList.remove('is-pressed'));
+            });
         </script>
     </body>
 </html>
