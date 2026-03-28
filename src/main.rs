@@ -47,7 +47,7 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
 
     let key = match payload.key.as_str() {
-        "space" => Key::Space,
+        "PlayPause" => Key::MediaPlayPause,
         "enter" => Key::Return,
         "left" => Key::LeftArrow,
         "right" => Key::RightArrow,
