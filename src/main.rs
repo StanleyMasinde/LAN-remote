@@ -131,7 +131,7 @@ async fn run_server() {
                 std::io::ErrorKind::PermissionDenied => {
                     format!("You don't have permission to bind to {port}")
                 }
-                std::io::ErrorKind::AddrInUse => format!("Address already in use."),
+                std::io::ErrorKind::AddrInUse => "Address already in use.".to_string(),
                 _ => panic!("Unexpected branch reached"),
             };
 
