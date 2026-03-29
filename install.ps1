@@ -10,6 +10,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 $Repo = "StanleyMasinde/LAN-remote"
 $BinaryName = "lan_remote"
@@ -43,7 +44,10 @@ function Get-ReleaseData([string]$RequestedVersion) {
     }
 
     try {
-        return Invoke-RestMethod -Uri $url -Method Get
+        return Invoke-RestMethod -Uri $url -Method Get -Headers @{
+            "Accept" = "application/vnd.github+json"
+            "X-GitHub-Api-Version" = "2022-11-28"
+        }
     } catch {
         throw "Could not fetch release data from $url. $($_.Exception.Message)"
     }
@@ -152,7 +156,11 @@ function Install-LanRemote([string]$RequestedVersion) {
         Write-Host ""
 
         Write-Host "Extracting..."
-        Expand-Archive -Path $archivePath -DestinationPath $tmpDir -Force
+        if ($ext -eq "zip") {
+            Expand-Archive -Path $archivePath -DestinationPath $tmpDir -Force
+        } else {
+            & tar -xzf $archivePath -C $tmpDir
+        }
 
         $binaryFile = if ($platform.StartsWith("windows-")) { "$BinaryName.exe" } else { $BinaryName }
         $sourceBinary = Join-Path $tmpDir $binaryFile
@@ -191,10 +199,10 @@ if ($Version -in @("-h", "--help")) {
 LAN Remote Installer (PowerShell)
 
 Usage:
-  irm https://raw.githubusercontent.com/$Repo/main/install.ps1 | iex
+  & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/$Repo/main/install.ps1")))
 
 Or with specific version:
-  irm https://raw.githubusercontent.com/$Repo/main/install.ps1 | iex; install.ps1 v1.0.0
+  & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/$Repo/main/install.ps1"))) -Version v1.0.0
 
 Parameters:
   -Version      Release tag (default: latest)

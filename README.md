@@ -54,15 +54,13 @@ curl -fsSL https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/inst
 **Windows PowerShell (latest):**
 
 ```powershell
-iwr https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1 -OutFile install.ps1
-.\install.ps1
+& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1")))
 ```
 
 **Windows PowerShell (specific version):**
 
 ```powershell
-iwr https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version v1.0.0
+& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1"))) -Version v1.0.0
 ```
 
 Custom install directory:
@@ -76,7 +74,7 @@ curl -fsSL https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/inst
 - PowerShell: use `-InstallDir` or set `LAN_REMOTE_INSTALL`, example:
 
 ```powershell
-.\install.ps1 -InstallDir "$HOME\\bin"
+& ([scriptblock]::Create((irm "https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/install.ps1"))) -InstallDir "$HOME\\bin"
 ```
 
 ---
