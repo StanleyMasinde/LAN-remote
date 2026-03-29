@@ -102,7 +102,7 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
         RemoteKey::Enter => Key::Return,
     };
 
-    enigo.key(key, enigo::Direction::Press).unwrap();
+    enigo.key(key, enigo::Direction::Click).unwrap();
 
     json!({"message": "cool"}).to_string()
 }
