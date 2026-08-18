@@ -1,463 +1,594 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#eef2ff" />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a" />
-        <title>LAN Remote</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#eef2ff"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0f172a"
+    />
+    <title>LAN Remote</title>
 
-        <style>
-            :root {
-                --bg: #eef2ff;
-                --surface: #ffffff;
-                --card: #dbe4f5;
-                --card-2: #e7eefb;
-                --text: #0f172a;
-                --muted: #475569;
-                --remote-start: #f8fbff;
-                --cluster-bg: rgba(255, 255, 255, 0.72);
-                --cluster-border: rgba(71, 85, 105, 0.18);
-                --nav-bg-start: rgba(219, 228, 245, 0.92);
-                --nav-bg-end: rgba(231, 238, 251, 0.96);
-                --nav-border: rgba(71, 85, 105, 0.22);
-                --panel-gap: clamp(0.5rem, 1.4vh, 0.9rem);
-                color-scheme: light dark;
-            }
+    <style>
+      :root {
+        --bg: #eef2ff;
+        --surface: #ffffff;
+        --card: #dbe4f5;
+        --card-2: #e7eefb;
+        --text: #0f172a;
+        --muted: #475569;
+        --remote-start: #f8fbff;
+        --cluster-bg: rgba(255, 255, 255, 0.72);
+        --cluster-border: rgba(71, 85, 105, 0.18);
+        --nav-bg-start: rgba(219, 228, 245, 0.92);
+        --nav-bg-end: rgba(231, 238, 251, 0.96);
+        --nav-border: rgba(71, 85, 105, 0.22);
+        --panel-gap: clamp(0.5rem, 1.4vh, 0.9rem);
+        color-scheme: light dark;
 
-            * {
-                box-sizing: border-box;
-            }
+        @media (prefers-color-scheme: dark) {
+          --bg: #0f172a;
+          --surface: #111a2d;
+          --card: #1e293b;
+          --card-2: #27354d;
+          --text: #e2e8f0;
+          --muted: #94a3b8;
+          --remote-start: #17233b;
+          --cluster-bg: rgba(30, 41, 59, 0.55);
+          --cluster-border: rgba(148, 163, 184, 0.12);
+          --nav-bg-start: rgba(39, 53, 77, 0.65);
+          --nav-bg-end: rgba(30, 41, 59, 0.85);
+          --nav-border: rgba(148, 163, 184, 0.2);
+        }
+      }
 
-            html,
-            body {
-                margin: 0;
-                height: 100%;
-            }
+      * {
+        box-sizing: border-box;
+      }
 
-            body {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-                    Cantarell, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
-                background: var(--bg);
-                color: var(--text);
-                display: grid;
-                grid-template-rows: auto 1fr auto;
-                height: 100dvh;
-                overflow: auto;
-            }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
 
-            header {
-                text-align: center;
-                padding: clamp(0.5rem, 2vh, 0.9rem);
-                color: var(--muted);
-            }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        height: 100dvh;
+        overflow: auto;
+      }
 
-            .app-title {
-                margin: 0;
-                font-size: 1rem;
-                letter-spacing: 0.06em;
-                text-transform: uppercase;
-                font-weight: 600;
-                text-wrap: balance;
-            }
+      header {
+        text-align: center;
+        padding: clamp(0.5rem, 2vh, 0.9rem);
+        color: var(--muted);
+      }
 
-            main {
-                min-height: 0;
-                display: grid;
-                place-items: center;
-                padding: 0 clamp(0.75rem, 3vw, 1rem);
-                container-type: inline-size;
-            }
+      .app-title {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 600;
+        text-wrap: balance;
 
-            .remote {
-                width: min(100%, 380px);
-                max-height: 100%;
-                border-radius: 28px;
-                padding: clamp(0.6rem, 1.8vh, 1rem);
-                background: linear-gradient(165deg, var(--remote-start) 0%, var(--surface) 100%);
-                border: 1px solid rgba(148, 163, 184, 0.18);
-                display: grid;
-                gap: var(--panel-gap);
-            }
+        @media (max-width: 380px) {
+          font-size: 0.92rem;
+        }
+      }
 
-            .cluster {
-                background: var(--cluster-bg);
-                border: 1px solid var(--cluster-border);
-                border-radius: 18px;
-                padding: clamp(0.4rem, 1.1vh, 0.65rem);
-            }
+      main {
+        min-height: 0;
+        display: grid;
+        place-items: center;
+        padding: 0 clamp(0.75rem, 3vw, 1rem);
+        container-type: inline-size;
+      }
 
-            .cluster-title {
-                margin: 0 0 0.4rem;
-                font-size: 0.68rem;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                color: var(--muted);
-                text-align: center;
-                text-wrap: balance;
-            }
+      .remote {
+        width: min(100%, 380px);
+        max-height: 100%;
+        border-radius: 28px;
+        padding: clamp(0.6rem, 1.8vh, 1rem);
+        background: linear-gradient(
+          165deg,
+          var(--remote-start) 0%,
+          var(--surface) 100%
+        );
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        display: grid;
+        gap: var(--panel-gap);
 
-            button {
-                border: none;
-                border-radius: 14px;
-                background: linear-gradient(180deg, var(--card-2) 0%, var(--card) 100%);
-                color: var(--text);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                cursor: pointer;
-                user-select: none;
-                -webkit-tap-highlight-color: transparent;
-                transition:
-                    transform 120ms ease,
-                    box-shadow 120ms ease,
-                    filter 120ms ease;
-            }
+        @media (max-height: 760px) {
+          gap: 0.5rem;
+          padding: 0.55rem;
+        }
 
-            button:active {
-                transform: scale(0.97);
-                box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--muted) 35%, transparent);
-            }
+        @container (max-width: 420px) {
+          border-radius: 22px;
+        }
+      }
 
-            button.is-pressed {
-                transform: scale(0.97);
-                box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--muted) 40%, transparent);
-                filter: brightness(0.95);
-            }
+      .cluster {
+        background: var(--cluster-bg);
+        border: 1px solid var(--cluster-border);
+        border-radius: 18px;
+        padding: clamp(0.4rem, 1.1vh, 0.65rem);
 
-            button:focus-visible {
-                outline: 2px solid color-mix(in srgb, var(--text) 70%, transparent);
-                outline-offset: 2px;
-            }
+        @media (max-height: 760px) {
+          padding: 0.38rem;
+        }
+      }
 
-            button svg {
-                width: 20px;
-                height: 20px;
-            }
+      .cluster-title {
+        margin: 0 0 0.4rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-align: center;
+        text-wrap: balance;
 
-            .media-pad {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: clamp(8px, 1.6vw, 10px);
-            }
+        @media (max-width: 380px) {
+          font-size: 0.62rem;
+        }
 
-            .media-pad .spacer {
-                min-height: clamp(42px, 5.8vh, 52px);
-            }
+        @media (max-height: 760px) {
+          margin-bottom: 0.22rem;
+          font-size: 0.58rem;
+        }
+      }
 
-            .media-pad button {
-                min-height: clamp(42px, 6.2vh, 58px);
-            }
+      button {
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(180deg, var(--card-2) 0%, var(--card) 100%);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          transform 120ms ease,
+          box-shadow 120ms ease,
+          filter 120ms ease;
 
-            .media-pad .play {
-                min-height: clamp(44px, 6.8vh, 62px);
-            }
+        &:active {
+          transform: scale(0.97);
+          box-shadow: inset 0 0 0 2px
+            color-mix(in srgb, var(--muted) 35%, transparent);
 
-            .nav-pad {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                width: clamp(156px, 48vw, 216px);
-                aspect-ratio: 1 / 1;
-                margin: 0 auto;
-                padding: clamp(8px, 2.4vw, 12px);
-                gap: clamp(8px, 2vw, 12px);
-                border-radius: 999px;
-                background: linear-gradient(180deg, var(--nav-bg-start) 0%, var(--nav-bg-end) 100%);
-                border: 1px solid var(--nav-border);
-            }
+          @media (prefers-reduced-motion: reduce) {
+            transform: none;
+          }
+        }
 
-            .nav-pad button {
-                width: 100%;
-                height: 100%;
-                max-width: 52px;
-                max-height: 52px;
-                justify-self: center;
-                align-self: center;
-                border-radius: 999px;
-            }
+        &.is-pressed {
+          transform: scale(0.97);
+          box-shadow: inset 0 0 0 2px
+            color-mix(in srgb, var(--muted) 40%, transparent);
+          filter: brightness(0.95);
+        }
 
-            .nav-pad .up {
-                grid-column: 2;
-            }
+        &:focus-visible {
+          outline: 2px solid color-mix(in srgb, var(--text) 70%, transparent);
+          outline-offset: 2px;
+        }
 
-            .nav-pad .left {
-                grid-column: 1;
-                grid-row: 2;
-            }
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
 
-            .nav-pad .center {
-                grid-column: 2;
-                grid-row: 2;
-            }
+      .media-pad {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(8px, 1.6vw, 10px);
 
-            .nav-pad .right {
-                grid-column: 3;
-                grid-row: 2;
-            }
+        .spacer {
+          min-height: clamp(42px, 5.8vh, 52px);
+        }
 
-            .nav-pad .down {
-                grid-column: 2;
-                grid-row: 3;
-            }
+        button {
+          min-height: clamp(42px, 6.2vh, 58px);
+        }
 
-            .mute {
-                min-height: clamp(44px, 6vh, 52px);
-                width: 100%;
-                border-radius: 999px;
-                font-size: 0.92rem;
-                font-weight: 600;
-            }
+        .play {
+          min-height: clamp(44px, 6.8vh, 62px);
+        }
 
-            .track-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
+        @media (max-height: 760px) {
+          gap: 6px;
+        }
+      }
 
-            .track-row button {
-                min-height: clamp(44px, 5.5vh, 48px);
-                font-size: clamp(0.78rem, 2.8vw, 0.86rem);
-            }
+      .nav-pad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: clamp(156px, 48vw, 216px);
+        aspect-ratio: 1 / 1;
+        margin: 0 auto;
+        padding: clamp(8px, 2.4vw, 12px);
+        gap: clamp(8px, 2vw, 12px);
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          var(--nav-bg-start) 0%,
+          var(--nav-bg-end) 100%
+        );
+        border: 1px solid var(--nav-border);
 
-            footer {
-                text-align: center;
-                padding: clamp(0.2rem, 0.9vh, 0.45rem);
-                font-size: 0.72rem;
-                color: var(--muted);
-            }
+        button {
+          width: 100%;
+          height: 100%;
+          max-width: 52px;
+          max-height: 52px;
+          justify-self: center;
+          align-self: center;
+          border-radius: 999px;
+        }
 
-            @media (max-width: 380px) {
-                .app-title {
-                    font-size: 0.92rem;
-                }
+        .up {
+          grid-column: 2;
+        }
 
-                .cluster-title {
-                    font-size: 0.62rem;
-                }
-            }
+        .left {
+          grid-column: 1;
+          grid-row: 2;
+        }
 
-            @media (max-height: 760px) {
-                .remote {
-                    gap: 0.5rem;
-                    padding: 0.55rem;
-                }
+        .center {
+          grid-column: 2;
+          grid-row: 2;
+        }
 
-                .cluster {
-                    padding: 0.38rem;
-                }
+        .right {
+          grid-column: 3;
+          grid-row: 2;
+        }
 
-                .cluster-title {
-                    margin-bottom: 0.22rem;
-                    font-size: 0.58rem;
-                }
+        .down {
+          grid-column: 2;
+          grid-row: 3;
+        }
 
-                .media-pad,
-                .nav-pad,
-                .track-row {
-                    gap: 6px;
-                }
-            }
+        @media (max-height: 760px) {
+          gap: 6px;
+        }
+      }
 
-            @media (prefers-color-scheme: dark) {
-                :root {
-                    --bg: #0f172a;
-                    --surface: #111a2d;
-                    --card: #1e293b;
-                    --card-2: #27354d;
-                    --text: #e2e8f0;
-                    --muted: #94a3b8;
-                    --remote-start: #17233b;
-                    --cluster-bg: rgba(30, 41, 59, 0.55);
-                    --cluster-border: rgba(148, 163, 184, 0.12);
-                    --nav-bg-start: rgba(39, 53, 77, 0.65);
-                    --nav-bg-end: rgba(30, 41, 59, 0.85);
-                    --nav-border: rgba(148, 163, 184, 0.2);
-                }
+      .mute {
+        min-height: clamp(44px, 6vh, 52px);
+        width: 100%;
+        border-radius: 999px;
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
 
-                body {
-                    background: var(--bg);
-                }
-            }
+      .track-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
 
-            @container (max-width: 420px) {
-                .remote {
-                    border-radius: 22px;
-                }
-            }
+        button {
+          min-height: clamp(44px, 5.5vh, 48px);
+          font-size: clamp(0.78rem, 2.8vw, 0.86rem);
+        }
 
-            @media (prefers-reduced-motion: reduce) {
-                *,
-                *::before,
-                *::after {
-                    animation: none !important;
-                    transition: none !important;
-                }
+        @media (max-height: 760px) {
+          gap: 6px;
+        }
+      }
 
-                button:active {
-                    transform: none;
-                }
-            }
-        </style>
-    </head>
+      footer {
+        text-align: center;
+        padding: clamp(0.2rem, 0.9vh, 0.45rem);
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
 
-    <body>
-        <header>
-            <h1 class="app-title">LAN Media Remote</h1>
-        </header>
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
 
-        <main>
-            <section class="remote" aria-label="LAN media remote controls">
-                <section class="cluster" aria-labelledby="playback-heading">
-                    <h2 id="playback-heading" class="cluster-title">Playback</h2>
-                    <div class="media-pad">
-                        <div class="spacer"></div>
-                        <button onclick="sendKey('volume_up')" aria-label="Volume up">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
-                                <path d="M14.25 9.75a3.75 3.75 0 0 1 0 4.5" />
-                                <path d="M16.5 7.5a7.5 7.5 0 0 1 0 9" />
-                            </svg>
-                        </button>
-                        <div class="spacer"></div>
+  <body>
+    <header>
+      <h1 class="app-title">LAN Media Remote</h1>
+    </header>
 
-                        <button onclick="sendKey('seek_left')" aria-label="Seek backward">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M6.75 6.75v10.5" />
-                                <path d="m17.25 7.5-7.5 4.5 7.5 4.5v-9Z" />
-                            </svg>
-                        </button>
-                        <button class="play" onclick="sendKey('PlayPause')" aria-label="Play or pause">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                aria-hidden="true"
-                            >
-                                <path d="m5.25 5.25 7.5 6.75-7.5 6.75V5.25Z" />
-                                <path d="M16.5 6.75v10.5" />
-                                <path d="M19.5 6.75v10.5" />
-                            </svg>
-                        </button>
-                        <button onclick="sendKey('seek_right')" aria-label="Seek forward">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M17.25 6.75v10.5" />
-                                <path d="m6.75 7.5 7.5 4.5-7.5 4.5v-9Z" />
-                            </svg>
-                        </button>
+    <main>
+      <section class="remote" aria-label="LAN media remote controls">
+        <section class="cluster" aria-labelledby="playback-heading">
+          <h2 id="playback-heading" class="cluster-title">Playback</h2>
+          <div class="media-pad">
+            <div class="spacer"></div>
+            <button onclick="sendKey('volume_up')" aria-label="Volume up">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
+                <path d="M14.25 9.75a3.75 3.75 0 0 1 0 4.5" />
+                <path d="M16.5 7.5a7.5 7.5 0 0 1 0 9" />
+              </svg>
+            </button>
+            <div class="spacer"></div>
 
-                        <div class="spacer"></div>
-                        <button onclick="sendKey('volume_down')" aria-label="Volume down">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
-                                <path d="M14.25 9.75a3.75 3.75 0 0 1 0 4.5" />
-                            </svg>
-                        </button>
-                        <div class="spacer"></div>
-                    </div>
-                </section>
+            <button onclick="sendKey('seek_left')" aria-label="Seek backward">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6.75 6.75v10.5" />
+                <path d="m17.25 7.5-7.5 4.5 7.5 4.5v-9Z" />
+              </svg>
+            </button>
+            <button
+              class="play"
+              onclick="sendKey('PlayPause')"
+              aria-label="Play or pause"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m5.25 5.25 7.5 6.75-7.5 6.75V5.25Z" />
+                <path d="M16.5 6.75v10.5" />
+                <path d="M19.5 6.75v10.5" />
+              </svg>
+            </button>
+            <button onclick="sendKey('seek_right')" aria-label="Seek forward">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M17.25 6.75v10.5" />
+                <path d="m6.75 7.5 7.5 4.5-7.5 4.5v-9Z" />
+              </svg>
+            </button>
 
-                <section class="cluster" aria-labelledby="navigation-heading">
-                    <h2 id="navigation-heading" class="cluster-title">Navigation</h2>
-                    <div class="nav-pad">
-                        <button class="up" onclick="sendKey('up')" aria-label="Up">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m15.75 11.25-3.75-3.75-3.75 3.75" />
-                                <path d="M12 8.25v8.25" />
-                            </svg>
-                        </button>
-                        <button class="left" onclick="sendKey('left')" aria-label="Left">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m11.25 15.75-3.75-3.75 3.75-3.75" />
-                                <path d="M8.25 12h8.25" />
-                            </svg>
-                        </button>
-                        <button class="center" onclick="sendKey('enter')" aria-label="Enter">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m9 15-6-6m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-                            </svg>
-                        </button>
-                        <button class="right" onclick="sendKey('right')" aria-label="Right">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m12.75 8.25 3.75 3.75-3.75 3.75" />
-                                <path d="M7.5 12h8.25" />
-                            </svg>
-                        </button>
-                        <button class="down" onclick="sendKey('down')" aria-label="Down">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m8.25 12.75 3.75 3.75 3.75-3.75" />
-                                <path d="M12 7.5v8.25" />
-                            </svg>
-                        </button>
-                    </div>
-                </section>
+            <div class="spacer"></div>
+            <button onclick="sendKey('volume_down')" aria-label="Volume down">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
+                <path d="M14.25 9.75a3.75 3.75 0 0 1 0 4.5" />
+              </svg>
+            </button>
+            <div class="spacer"></div>
+          </div>
+        </section>
 
-                <section class="cluster" aria-labelledby="track-heading">
-                    <h2 id="track-heading" class="cluster-title">Track</h2>
-                    <div class="track-row">
-                        <button onclick="sendKey('previous')" aria-label="Previous chapter">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m13.5 6.75-5.25 5.25 5.25 5.25" />
-                                <path d="m19.5 6.75-5.25 5.25 5.25 5.25" />
-                            </svg>
-                            Prev
-                        </button>
-                        <button onclick="sendKey('next')" aria-label="Next chapter">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="m10.5 6.75 5.25 5.25-5.25 5.25" />
-                                <path d="m4.5 6.75 5.25 5.25-5.25 5.25" />
-                            </svg>
-                            Next
-                        </button>
-                    </div>
-                </section>
+        <section class="cluster" aria-labelledby="navigation-heading">
+          <h2 id="navigation-heading" class="cluster-title">Navigation</h2>
+          <div class="nav-pad">
+            <button class="up" onclick="sendKey('up')" aria-label="Up">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m15.75 11.25-3.75-3.75-3.75 3.75" />
+                <path d="M12 8.25v8.25" />
+              </svg>
+            </button>
+            <button class="left" onclick="sendKey('left')" aria-label="Left">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m11.25 15.75-3.75-3.75 3.75-3.75" />
+                <path d="M8.25 12h8.25" />
+              </svg>
+            </button>
+            <button
+              class="center"
+              onclick="sendKey('enter')"
+              aria-label="Enter"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m9 15-6-6m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+              </svg>
+            </button>
+            <button class="right" onclick="sendKey('right')" aria-label="Right">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m12.75 8.25 3.75 3.75-3.75 3.75" />
+                <path d="M7.5 12h8.25" />
+              </svg>
+            </button>
+            <button class="down" onclick="sendKey('down')" aria-label="Down">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m8.25 12.75 3.75 3.75 3.75-3.75" />
+                <path d="M12 7.5v8.25" />
+              </svg>
+            </button>
+          </div>
+        </section>
 
-                <button class="mute" onclick="sendKey('mute_toggle')" aria-label="Mute toggle">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
-                        <path d="m16.5 9.75 3.75 4.5" />
-                        <path d="m20.25 9.75-3.75 4.5" />
-                    </svg>
-                    Mute
-                </button>
-            </section>
-        </main>
+        <section class="cluster" aria-labelledby="track-heading">
+          <h2 id="track-heading" class="cluster-title">Track</h2>
+          <div class="track-row">
+            <button onclick="sendKey('previous')" aria-label="Previous chapter">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m13.5 6.75-5.25 5.25 5.25 5.25" />
+                <path d="m19.5 6.75-5.25 5.25 5.25 5.25" />
+              </svg>
+              Prev
+            </button>
+            <button onclick="sendKey('next')" aria-label="Next chapter">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m10.5 6.75 5.25 5.25-5.25 5.25" />
+                <path d="m4.5 6.75 5.25 5.25-5.25 5.25" />
+              </svg>
+              Next
+            </button>
+          </div>
+        </section>
 
-        <footer>LAN only</footer>
+        <button
+          class="mute"
+          onclick="sendKey('mute_toggle')"
+          aria-label="Mute toggle"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
+            <path d="m16.5 9.75 3.75 4.5" />
+            <path d="m20.25 9.75-3.75 4.5" />
+          </svg>
+          Mute
+        </button>
+      </section>
+    </main>
 
-        <script>
-            async function sendKey(key) {
-                try {
-                    await fetch('/key', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ key }),
-                    });
-                } catch (e) {
-                    console.error(e);
-                }
-            }
+    <footer>LAN only</footer>
 
-            function flashPressed(button) {
-                button.classList.add('is-pressed');
-                setTimeout(() => button.classList.remove('is-pressed'), 140);
-            }
+    <script>
+      async function sendKey(key) {
+        try {
+          await fetch("/key", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key }),
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
-            document.querySelectorAll('button').forEach((button) => {
-                button.addEventListener('pointerdown', () => button.classList.add('is-pressed'));
-                button.addEventListener('pointerup', () => button.classList.remove('is-pressed'));
-                button.addEventListener('pointercancel', () => button.classList.remove('is-pressed'));
-                button.addEventListener('pointerleave', () => button.classList.remove('is-pressed'));
-                button.addEventListener('click', () => flashPressed(button));
-                button.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') button.classList.add('is-pressed');
-                });
-                button.addEventListener('keyup', () => button.classList.remove('is-pressed'));
-            });
-        </script>
-    </body>
+      function flashPressed(button) {
+        button.classList.add("is-pressed");
+        setTimeout(() => button.classList.remove("is-pressed"), 140);
+      }
+
+      document.querySelectorAll("button").forEach((button) => {
+        button.addEventListener("pointerdown", () =>
+          button.classList.add("is-pressed"),
+        );
+        button.addEventListener("pointerup", () =>
+          button.classList.remove("is-pressed"),
+        );
+        button.addEventListener("pointercancel", () =>
+          button.classList.remove("is-pressed"),
+        );
+        button.addEventListener("pointerleave", () =>
+          button.classList.remove("is-pressed"),
+        );
+        button.addEventListener("click", () => flashPressed(button));
+        button.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ")
+            button.classList.add("is-pressed");
+        });
+        button.addEventListener("keyup", () =>
+          button.classList.remove("is-pressed"),
+        );
+      });
+    </script>
+  </body>
 </html>
