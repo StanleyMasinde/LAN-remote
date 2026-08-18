@@ -1,5 +1,6 @@
 ## What's Changed in 0.3.1
-* chore: bump to version 0.3.1
+* chore: update the changelog template by @StanleyMasinde
+* chore: bump to version 0.3.1 by @StanleyMasinde
 
 **Full Changelog**: https://github.com/StanleyMasinde/LAN-remote/compare/v0.3.0...0.3.1
 
