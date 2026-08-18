@@ -1,4 +1,4 @@
-use std::{env::args, process};
+use std::{env::args, io::ErrorKind, process};
 
 use axum::{
     Json, Router,
@@ -80,7 +80,7 @@ struct KeyRequest {
 }
 
 async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
-    let mut enigo = Enigo::new(&Settings::default()).unwrap();
+    let mut enigo = Enigo::new(&Settings::default()).expect("Failed to start key simulation.");
 
     let key = match payload.key {
         RemoteKey::VolumeUp => Key::VolumeUp,
@@ -102,9 +102,11 @@ async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
         RemoteKey::Enter => Key::Return,
     };
 
-    enigo.key(key, enigo::Direction::Click).unwrap();
-
-    json!({"message": "cool"}).to_string()
+    if let Ok(_res) = enigo.key(key, enigo::Direction::Click) {
+        json!({"message": "cool"}).to_string()
+    } else {
+        json!({"message": "Failed to simulate Key"}).to_string()
+    }
 }
 
 async fn run_server() {
@@ -139,13 +141,28 @@ async fn run_server() {
             process::exit(1)
         }
     };
-    let local_addr = listener.local_addr().unwrap();
 
-    println!(
-        "Server running on http://{}:{}",
-        local_ip,
-        local_addr.port()
-    );
+    match listener.local_addr() {
+        Ok(local_addr) => {
+            println!(
+                "Server running on http://{}:{}",
+                local_ip,
+                local_addr.port()
+            );
+        }
+        Err(err) => {
+            match err.kind() {
+                ErrorKind::AddrInUse => {
+                    println!("Port already in use.")
+                }
+                _ => println!("Failed to listen to address."),
+            }
 
-    axum::serve(listener, app).await.unwrap();
+            process::exit(1)
+        }
+    };
+
+    if let Err(err) = axum::serve(listener, app).await {
+        eprint!("Failed to start server: {}", err)
+    };
 }
