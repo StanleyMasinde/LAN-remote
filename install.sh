@@ -5,7 +5,7 @@ set -e
 REPO="StanleyMasinde/LAN-remote"
 VERSION="${1:-latest}"
 INSTALL_DIR="${LAN_REMOTE_INSTALL:-/usr/local/bin}"
-BINARY_NAME="lan_remote"
+BINARY_NAME="lan-remote"
 
 detect_platform() {
     os=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -137,7 +137,7 @@ install_lan_remote() {
         echo "Error: Could not find asset '$filename' in release" >&2
         echo "" >&2
         echo "Available assets for this release:" >&2
-        echo "$release_json" | grep -o '"name"[[:space:]]*:[[:space:]]*"lan_remote-[^"]*"' | sed 's/.*"\(lan_remote-[^"]*\)".*/  - \1/' >&2
+        echo "$release_json" | grep -o '"name"[[:space:]]*:[[:space:]]*"lan-remote-[^"]*"' | sed 's/.*"\(lan-remote-[^"]*\)".*/  - \1/' >&2
         exit 1
     fi
 
@@ -258,7 +258,7 @@ Supported Platforms:
   - Windows (x86_64, arm64)
 
 Notes:
-  - Downloads assets named like: lan_remote-<platform>-<arch>-<tag>.<ext>
+  - Downloads assets named like: lan-remote-<platform>-<arch>-<tag>.<ext>
   - Checksum verification runs when GitHub API provides a sha256 digest
 EOF
 }
