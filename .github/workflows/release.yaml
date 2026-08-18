@@ -121,7 +121,7 @@ jobs:
             archive: zip
 
     env:
-      BIN_NAME: lan_remote
+      BIN_NAME: lan-remote
       RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
 
     steps:
