@@ -5,7 +5,7 @@ param(
     [Parameter(Position = 0)]
     [string]$Version = "latest",
 
-    [string]$InstallDir = $(if ($env:LAN_REMOTE_INSTALL) { $env:LAN_REMOTE_INSTALL } elseif ($IsWindows) { Join-Path $env:LOCALAPPDATA "Programs\lan_remote\bin" } else { "/usr/local/bin" })
+    [string]$InstallDir = $(if ($env:LAN_REMOTE_INSTALL) { $env:LAN_REMOTE_INSTALL } elseif ($IsWindows) { Join-Path $env:LOCALAPPDATA "Programs\lan-remote\bin" } else { "/usr/local/bin" })
 )
 
 Set-StrictMode -Version Latest
@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $Repo = "StanleyMasinde/LAN-remote"
-$BinaryName = "lan_remote"
+$BinaryName = "lan-remote"
 
 function Get-Platform {
     $os = if ($IsWindows) {
@@ -217,7 +217,7 @@ Supported Platforms:
   - Windows (x86_64, arm64)
 
 Notes:
-  - Downloads assets named like: lan_remote-<platform>-<arch>-<tag>.<ext>
+  - Downloads assets named like: lan-remote-<platform>-<arch>-<tag>.<ext>
   - Adds InstallDir to User PATH on Windows if missing
 "@ | Write-Host
     exit 0
