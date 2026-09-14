@@ -54,6 +54,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Get version
+        id: version
+        shell: bash
+        run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -72,7 +77,7 @@ jobs:
         shell: bash
         run: |
           cd target/${{ matrix.target }}/release
-          tar czf ../../../${{ env.BIN_NAME }}-${{ matrix.target }}.tar.gz ${{ env.BIN_NAME }}
+          tar czf ../../../${{ env.BIN_NAME }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.version.outputs.version }}.tar.gz ${{ env.BIN_NAME }}
           cd -
 
       - name: Package (windows)
@@ -80,14 +85,14 @@ jobs:
         shell: pwsh
         run: |
           cd target/${{ matrix.target }}/release
-          Compress-Archive -Path ${{ env.BIN_NAME }}.exe -DestinationPath ../../../${{ env.BIN_NAME }}-${{ matrix.target }}.zip
+          Compress-Archive -Path ${{ env.BIN_NAME }}.exe -DestinationPath ../../../${{ env.BIN_NAME }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.version.outputs.version }}.zip
           cd -
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ env.BIN_NAME }}-${{ matrix.target }}
-          path: ${{ env.BIN_NAME }}-${{ matrix.target }}.${{ matrix.archive }}
+          name: ${{ env.BIN_NAME }}-${{ matrix.platform }}-${{ matrix.arch }}
+          path: ${{ env.BIN_NAME }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ steps.version.outputs.version }}.${{ matrix.archive }}
 
   release:
     name: Publish GitHub Release
