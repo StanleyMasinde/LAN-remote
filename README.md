@@ -20,6 +20,9 @@ Works on **Windows, macOS, and Linux** using **Enigo** for cross-platform media 
 * Navigation controls:
   * Up / Down / Left / Right
   * Enter
+* App-specific remotes:
+  * YouTube remote with playback, full screen/theatre/captions/mini player, mute, search, and playlist shortcuts
+  * Switch remotes from the dropdown in the header, or open `/youtube` directly
 * Minimal, fast, and responsive
 * Works over LAN
 * Displays your PC’s LAN IP on startup
@@ -31,13 +34,13 @@ Works on **Windows, macOS, and Linux** using **Enigo** for cross-platform media 
 ## Requirements
 
 * LAN connection between PC and mobile device
-* Startup IP detection currently probes route info via `8.8.8.8:80`; if that path is blocked, startup may fail in the current version
+* Start up IP detection currently probes route info via `8.8.8.8:80`; if that path is blocked, start up may fail in the current version
 
 ---
 
 ## Installation
 
-### Option A: Install prebuilt binaries (recommended)
+### Option a: Install Prebuilt Binaries (Recommended)
 
 **macOS / Linux (latest):**
 
@@ -79,7 +82,7 @@ curl -fsSL https://raw.githubusercontent.com/StanleyMasinde/LAN-remote/main/inst
 
 ---
 
-### Option B: Build from source
+### Option B: Build from Source
 
 1. Install Rust from [rustup.rs](https://rustup.rs/).
 2. Build:
@@ -102,7 +105,7 @@ cargo run --release -- 8080
 
 ---
 
-### Open the remote
+### Open the Remote
 
 * On your phone (connected to the same LAN), open:
 
@@ -110,6 +113,7 @@ cargo run --release -- 8080
   http://<PC_LAN_IP>:<PORT>
   ```
 * Use the buttons to control media on your PC.
+* YouTube remote: open `http://<PC_LAN_IP>:<PORT>/youtube`, or pick "YouTube" in the header dropdown on the main remote. Your browser must be focused on the YouTube tab, since the remote types shortcuts into the focused window.
 * Default port is `3000` if you do not pass an argument.
 
 ---
@@ -129,11 +133,30 @@ cargo run --release -- 8080
 | Up / Down / Left / Right | Directional navigation | Windows / macOS / Linux |
 | Enter | Confirm/select | Windows / macOS / Linux |
 
+### YouTube Remote (`/youtube`)
+
+Sends YouTube keyboard shortcuts to the focused window, so keep your browser focused on the YouTube tab. Buttons post a single character to `POST /custom` (example: `{"key": "k"}`).
+
+| Button | Shortcut sent | Function |
+| ------ | ------------- | -------- |
+| Back 10 seconds | J | Skip backward 10 seconds |
+| Play / Pause | K | Start or pause video |
+| Forward 10 seconds | L | Skip forward 10 seconds |
+| Full screen | F | Toggle full screen |
+| Theatre | T | Toggle theatre mode |
+| Captions | C | Toggle captions |
+| Mini-player | I | Toggle mini player |
+| Mute | M | Mute/unmute the YouTube player |
+| Search | / | Focus search |
+| Previous | ⇧ P | Previous video in playlist |
+| Next | ⇧ N | Next video in playlist |
+
 ---
 
 ## Notes
 
 * The **Mute button is stateless** — it always sends a toggle command.
+* App-specific remotes (like YouTube) type keystrokes into **whichever window is focused** — they do not target an app directly, so keep the right window focused.
 * Your phone and PC must be **on the same LAN**.
 * Designed for LAN use only; not intended to be exposed to the internet.
 * Works on **Windows, macOS, and Linux**.
