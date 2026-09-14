@@ -40,6 +40,15 @@ async fn index_handler() -> Html<Vec<u8>> {
     Html(index_page)
 }
 
+async fn youtube_handler() -> Html<Vec<u8>> {
+    let index_page = Asset::get("youtube.html")
+        .expect("youtube.html is missing.")
+        .data
+        .to_vec();
+
+    Html(index_page)
+}
+
 #[derive(Debug, Deserialize)]
 pub enum RemoteKey {
     #[serde(rename = "volume_up")]
@@ -77,6 +86,22 @@ pub enum RemoteKey {
 #[derive(Deserialize)]
 struct KeyRequest {
     key: RemoteKey,
+}
+
+#[derive(Deserialize)]
+struct CustomRemoteRequest {
+    key: char,
+}
+
+async fn handle_custom_remote(Json(payload): Json<CustomRemoteRequest>) -> String {
+    let mut enigo = Enigo::new(&Settings::default()).expect("Failed to start key simulation.");
+    let key = Key::Unicode(payload.key);
+
+    if let Ok(_res) = enigo.key(key, enigo::Direction::Click) {
+        json!({"message": "cool"}).to_string()
+    } else {
+        json!({"message": "Failed to simulate Key"}).to_string()
+    }
 }
 
 async fn handle_keys(Json(payload): Json<KeyRequest>) -> String {
@@ -123,9 +148,13 @@ async fn run_server() {
     if let Some(ip) = get_local_ip().await {
         local_ip = ip;
     }
+
     let app = Router::new()
         .route("/", get(index_handler))
-        .route("/key", post(handle_keys));
+        .route("/youtube", get(youtube_handler))
+        .route("/key", post(handle_keys))
+        .route("/custom", post(handle_custom_remote));
+
     let listener = match tokio::net::TcpListener::bind(address).await {
         Ok(l) => l,
         Err(e) => {

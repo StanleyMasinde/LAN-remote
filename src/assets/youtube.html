@@ -13,7 +13,7 @@
       media="(prefers-color-scheme: dark)"
       content="#0f172a"
     />
-    <title>LAN Remote</title>
+    <title>YouTube Remote</title>
 
     <style>
       :root {
@@ -87,22 +87,6 @@
         @media (max-width: 380px) {
           font-size: 0.92rem;
         }
-      }
-
-      .remote-select {
-        margin-top: 0.5rem;
-        font: inherit;
-        font-size: 0.85rem;
-        color: var(--text);
-        background: linear-gradient(
-          180deg,
-          var(--card-2) 0%,
-          var(--card) 100%
-        );
-        border: 1px solid var(--cluster-border);
-        border-radius: 10px;
-        padding: 0.4rem 0.6rem;
-        cursor: pointer;
       }
 
       main {
@@ -217,10 +201,6 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: clamp(8px, 1.6vw, 10px);
 
-        .spacer {
-          min-height: clamp(42px, 5.8vh, 52px);
-        }
-
         button {
           min-height: clamp(42px, 6.2vh, 58px);
         }
@@ -232,69 +212,6 @@
         @media (max-height: 760px) {
           gap: 6px;
         }
-      }
-
-      .nav-pad {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        width: clamp(156px, 48vw, 216px);
-        aspect-ratio: 1 / 1;
-        margin: 0 auto;
-        padding: clamp(8px, 2.4vw, 12px);
-        gap: clamp(8px, 2vw, 12px);
-        border-radius: 999px;
-        background: linear-gradient(
-          180deg,
-          var(--nav-bg-start) 0%,
-          var(--nav-bg-end) 100%
-        );
-        border: 1px solid var(--nav-border);
-
-        button {
-          width: 100%;
-          height: 100%;
-          max-width: 52px;
-          max-height: 52px;
-          justify-self: center;
-          align-self: center;
-          border-radius: 999px;
-        }
-
-        .up {
-          grid-column: 2;
-        }
-
-        .left {
-          grid-column: 1;
-          grid-row: 2;
-        }
-
-        .center {
-          grid-column: 2;
-          grid-row: 2;
-        }
-
-        .right {
-          grid-column: 3;
-          grid-row: 2;
-        }
-
-        .down {
-          grid-column: 2;
-          grid-row: 3;
-        }
-
-        @media (max-height: 760px) {
-          gap: 6px;
-        }
-      }
-
-      .mute {
-        min-height: clamp(44px, 6vh, 52px);
-        width: 100%;
-        border-radius: 999px;
-        font-size: 0.92rem;
-        font-weight: 600;
       }
 
       .track-row {
@@ -312,11 +229,26 @@
         }
       }
 
+      button kbd {
+        font-family: inherit;
+        font-size: 0.68rem;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--muted);
+        border: 1px solid var(--cluster-border);
+        border-radius: 6px;
+        padding: 3px 6px;
+      }
+
       footer {
         text-align: center;
         padding: clamp(0.2rem, 0.9vh, 0.45rem);
         font-size: 0.72rem;
         color: var(--muted);
+      }
+
+      footer a {
+        color: inherit;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -332,37 +264,15 @@
 
   <body>
     <header>
-      <h1 class="app-title">LAN Media Remote</h1>
-      <select id="remote-select" class="remote-select" aria-label="Choose remote">
-        <option value="general" selected>General remote</option>
-        <option value="youtube">YouTube</option>
-      </select>
+      <h1 class="app-title">YouTube Remote</h1>
     </header>
 
     <main>
-      <section class="remote" aria-label="LAN media remote controls">
+      <section class="remote" aria-label="YouTube remote controls">
         <section class="cluster" aria-labelledby="playback-heading">
           <h2 id="playback-heading" class="cluster-title">Playback</h2>
           <div class="media-pad">
-            <div class="spacer"></div>
-            <button data-key="volume_up" aria-label="Volume up">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
-                <path d="M14.25 9.75a3.75 3.75 0 0 1 0 4.5" />
-                <path d="M16.5 7.5a7.5 7.5 0 0 1 0 9" />
-              </svg>
-            </button>
-            <div class="spacer"></div>
-
-            <button data-key="seek_left" aria-label="Seek backward">
+            <button data-key="j" aria-label="Back 10 seconds">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -375,12 +285,9 @@
                 <path d="M6.75 6.75v10.5" />
                 <path d="m17.25 7.5-7.5 4.5 7.5 4.5v-9Z" />
               </svg>
+              <kbd>J</kbd>
             </button>
-            <button
-              class="play"
-              data-key="PlayPause"
-              aria-label="Play or pause"
-            >
+            <button class="play" data-key="k" aria-label="Play or pause">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -394,8 +301,9 @@
                 <path d="M16.5 6.75v10.5" />
                 <path d="M19.5 6.75v10.5" />
               </svg>
+              <kbd>K</kbd>
             </button>
-            <button data-key="seek_right" aria-label="Seek forward">
+            <button data-key="l" aria-label="Forward 10 seconds">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -408,106 +316,45 @@
                 <path d="M17.25 6.75v10.5" />
                 <path d="m6.75 7.5 7.5 4.5-7.5 4.5v-9Z" />
               </svg>
+              <kbd>L</kbd>
             </button>
-
-            <div class="spacer"></div>
-            <button data-key="volume_down" aria-label="Volume down">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
-                <path d="M14.25 9.75a3.75 3.75 0 0 1 0 4.5" />
-              </svg>
-            </button>
-            <div class="spacer"></div>
           </div>
         </section>
 
-        <section class="cluster" aria-labelledby="navigation-heading">
-          <h2 id="navigation-heading" class="cluster-title">Navigation</h2>
-          <div class="nav-pad">
-            <button class="up" data-key="up" aria-label="Up">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="m15.75 11.25-3.75-3.75-3.75 3.75" />
-                <path d="M12 8.25v8.25" />
-              </svg>
+        <section class="cluster" aria-labelledby="youtube-heading">
+          <h2 id="youtube-heading" class="cluster-title">YouTube</h2>
+          <div class="track-row">
+            <button data-key="f" aria-label="Toggle fullscreen">
+              Full screen
+              <kbd>F</kbd>
             </button>
-            <button class="left" data-key="left" aria-label="Left">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="m11.25 15.75-3.75-3.75 3.75-3.75" />
-                <path d="M8.25 12h8.25" />
-              </svg>
+            <button data-key="t" aria-label="Toggle theater mode">
+              Theatre
+              <kbd>T</kbd>
             </button>
-            <button class="center" data-key="enter" aria-label="Enter">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="m9 15-6-6m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
-              </svg>
+            <button data-key="c" aria-label="Toggle captions">
+              Captions
+              <kbd>C</kbd>
             </button>
-            <button class="right" data-key="right" aria-label="Right">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="m12.75 8.25 3.75 3.75-3.75 3.75" />
-                <path d="M7.5 12h8.25" />
-              </svg>
+            <button data-key="i" aria-label="Toggle miniplayer">
+              Mini-player
+              <kbd>I</kbd>
             </button>
-            <button class="down" data-key="down" aria-label="Down">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="m8.25 12.75 3.75 3.75 3.75-3.75" />
-                <path d="M12 7.5v8.25" />
-              </svg>
+            <button data-key="m" aria-label="Mute YouTube player">
+              Mute
+              <kbd>M</kbd>
+            </button>
+            <button data-key="/" aria-label="Focus search">
+              Search
+              <kbd>/</kbd>
             </button>
           </div>
         </section>
 
         <section class="cluster" aria-labelledby="track-heading">
-          <h2 id="track-heading" class="cluster-title">Track</h2>
+          <h2 id="track-heading" class="cluster-title">Playlist</h2>
           <div class="track-row">
-            <button data-key="previous" aria-label="Previous chapter">
+            <button data-key="P" aria-label="Previous video">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -521,8 +368,9 @@
                 <path d="m19.5 6.75-5.25 5.25 5.25 5.25" />
               </svg>
               Prev
+              <kbd>⇧ P</kbd>
             </button>
-            <button data-key="next" aria-label="Next chapter">
+            <button data-key="N" aria-label="Next video">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -536,37 +384,21 @@
                 <path d="m4.5 6.75 5.25 5.25-5.25 5.25" />
               </svg>
               Next
+              <kbd>⇧ N</kbd>
             </button>
           </div>
         </section>
-
-        <button class="mute" data-key="mute_toggle" aria-label="Mute toggle">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M11.25 5.197 6.75 8.25h-3v7.5h3l4.5 3.053V5.197Z" />
-            <path d="m16.5 9.75 3.75 4.5" />
-            <path d="m20.25 9.75-3.75 4.5" />
-          </svg>
-          Mute
-        </button>
       </section>
     </main>
 
-    <footer>LAN only</footer>
+    <footer>LAN only · <a href="/">Back to main remote</a></footer>
 
     <script type="module">
       const remote = document.querySelector(".remote");
 
       async function sendKey(key) {
         try {
-          await fetch("/key", {
+          await fetch("/custom", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ key }),
@@ -611,14 +443,6 @@
 
       remote.addEventListener("keyup", (event) => {
         event.target.closest("button")?.classList.remove("is-pressed");
-      });
-
-      const remoteSelect = document.getElementById("remote-select");
-
-      remoteSelect.addEventListener("change", () => {
-        if (remoteSelect.value === "youtube") {
-          window.location.href = "youtube";
-        }
       });
     </script>
   </body>
