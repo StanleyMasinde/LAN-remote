@@ -210,15 +210,29 @@ install_lan_remote() {
     chmod +x "$extracted_binary" 2>/dev/null || true
 
     echo "Installing to $INSTALL_DIR..."
-    if mkdir -p "$INSTALL_DIR" 2>/dev/null; then
-        install -m 755 "$extracted_binary" "$INSTALL_DIR/$extracted_binary"
+
+    needs_sudo=0
+    if [ -d "$INSTALL_DIR" ]; then
+        [ -w "$INSTALL_DIR" ] || needs_sudo=1
     else
+        mkdir -p "$INSTALL_DIR" 2>/dev/null || needs_sudo=1
+    fi
+
+    if [ "$needs_sudo" -eq 1 ]; then
+        if ! command -v sudo >/dev/null 2>&1; then
+            echo "Error: No write permission to $INSTALL_DIR and sudo not found" >&2
+            echo "Set LAN_REMOTE_INSTALL to a writable directory instead" >&2
+            exit 1
+        fi
+        echo "Requesting elevated privileges to write to $INSTALL_DIR..."
         sudo mkdir -p "$INSTALL_DIR"
         sudo install -m 755 "$extracted_binary" "$INSTALL_DIR/$extracted_binary" || {
             echo "Error: Installation failed" >&2
             echo "Set LAN_REMOTE_INSTALL to a writable directory if needed" >&2
             exit 1
         }
+    else
+        install -m 755 "$extracted_binary" "$INSTALL_DIR/$extracted_binary"
     fi
 
     trap - EXIT INT TERM

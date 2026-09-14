@@ -113,6 +113,20 @@ function Ensure-PathContains([string]$Dir) {
     Write-Host "Open a new terminal session for PATH changes to take effect."
 }
 
+function Test-Writable([string]$Dir) {
+    try {
+        if (-not (Test-Path $Dir)) {
+            New-Item -ItemType Directory -Path $Dir -Force -ErrorAction Stop | Out-Null
+        }
+        $testFile = Join-Path $Dir (".write_test_$([System.Guid]::NewGuid().ToString('N'))")
+        [System.IO.File]::WriteAllText($testFile, "")
+        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 function Install-LanRemote([string]$RequestedVersion) {
     $platform = Get-Platform
     $ext = if ($platform.StartsWith("windows-")) { "zip" } else { "tar.gz" }
@@ -168,16 +182,29 @@ function Install-LanRemote([string]$RequestedVersion) {
             throw "Binary '$binaryFile' not found after extraction"
         }
 
-        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
         $targetBinary = Join-Path $InstallDir $binaryFile
 
         Write-Host "Installing to $InstallDir..."
-        Copy-Item -Path $sourceBinary -Destination $targetBinary -Force
 
-        if (-not $IsWindows) {
-            & chmod +x $targetBinary
+        if (-not $IsWindows -and -not (Test-Writable $InstallDir)) {
+            if (-not (Get-Command sudo -ErrorAction SilentlyContinue)) {
+                throw "No write permission to $InstallDir and sudo not found. Set LAN_REMOTE_INSTALL to a writable directory instead."
+            }
+            Write-Host "Requesting elevated privileges to write to $InstallDir..."
+            & sudo mkdir -p $InstallDir
+            if ($LASTEXITCODE -ne 0) { throw "Installation failed creating $InstallDir" }
+            & sudo cp $sourceBinary $targetBinary
+            if ($LASTEXITCODE -ne 0) { throw "Installation failed copying to $InstallDir. Set LAN_REMOTE_INSTALL to a writable directory if needed" }
+            & sudo chmod 755 $targetBinary
         } else {
-            Ensure-PathContains -Dir $InstallDir
+            New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+            Copy-Item -Path $sourceBinary -Destination $targetBinary -Force
+
+            if (-not $IsWindows) {
+                & chmod +x $targetBinary
+            } else {
+                Ensure-PathContains -Dir $InstallDir
+            }
         }
 
         Write-Host ""
