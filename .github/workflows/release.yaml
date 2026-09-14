@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.BIN_NAME }}-${{ matrix.target }}
-          path: ${{ env.BIN_NAME }}-${{ matrix.target }}.${{ matrix.archive_ext }}
+          path: ${{ env.BIN_NAME }}-${{ matrix.target }}.${{ matrix.archive }}
 
   release:
     name: Publish GitHub Release
